@@ -796,7 +796,9 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           String? blobUrl = await uploadToBlob(file);
           // FFAppState().carImages.add(blobUrl!.toString());
           // print(FFAppState().carImages);
-          // showInSnackBar('Picture saved to ${FFAppState().carImages.last}');
+          await GallerySaver.saveImage(file.path, albumName: 'Airside')
+              .then((value) => true);
+          showInSnackBar('Picture saved to ${file.path}');
         }
       }
     });
