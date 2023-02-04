@@ -161,30 +161,23 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       // appBar: AppBar(
       //   title: const Text('Camera example'),
       // ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: controller != null ? onFlashModeButtonPressed : null,
+        child: const Icon(Icons.flash_on_rounded),
+        backgroundColor: Colors.white.withOpacity(0.1),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.black,
-                border: Border.all(
-                  color:
-                      controller != null && controller!.value.isRecordingVideo
-                          ? Colors.redAccent
-                          : Colors.grey,
-                  width: 3.0,
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Center(
-                  child: _cameraPreviewWidget(),
-                ),
-              ),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Stack(
+              children: [
+                Expanded(child: _cameraPreviewWidget()),
+                Positioned(bottom: 0, child: _captureControlRowWidget()),
+              ],
             ),
           ),
-          _captureControlRowWidget(),
-          _modeControlRowWidget(),
           Padding(
             padding: const EdgeInsets.all(5.0),
             child: Row(
@@ -204,14 +197,24 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     final CameraController? cameraController = controller;
 
     if (cameraController == null || !cameraController.value.isInitialized) {
-      return const Text(
-        'Tap a camera',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 24.0,
-          fontWeight: FontWeight.w900,
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(5),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(5),
+          ),
         ),
       );
+
+      // return const Text(
+      //   'Tap a camera',
+      //   style: TextStyle(
+      //     color: Colors.white,
+      //     fontSize: 24.0,
+      //     fontWeight: FontWeight.w900,
+      //   ),
+      // );
     } else {
       return Listener(
         onPointerDown: (_) => _pointers++,
@@ -293,58 +296,58 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     );
   }
 
-  /// Display a bar with buttons to change the flash and exposure modes
-  Widget _modeControlRowWidget() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            // IconButton(
-            //   icon: const Icon(Icons.flash_on),
-            //   color: Colors.blue,
-            //   onPressed: controller != null ? onFlashModeButtonPressed : null,
-            // ),
-            //   // The exposure and focus mode are currently not supported on the web.
-            //   ...!kIsWeb
-            //       ? <Widget>[
-            //           IconButton(
-            //             icon: const Icon(Icons.exposure),
-            //             color: Colors.blue,
-            //             onPressed: controller != null
-            //                 ? onExposureModeButtonPressed
-            //                 : null,
-            //           ),
-            //           IconButton(
-            //             icon: const Icon(Icons.filter_center_focus),
-            //             color: Colors.blue,
-            //             onPressed:
-            //                 controller != null ? onFocusModeButtonPressed : null,
-            //           )
-            //         ]
-            //       : <Widget>[],
-            //   IconButton(
-            //     icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
-            //     color: Colors.blue,
-            //     onPressed: controller != null ? onAudioModeButtonPressed : null,
-            //   ),
-            //   IconButton(
-            //     icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
-            //         ? Icons.screen_lock_rotation
-            //         : Icons.screen_rotation),
-            //     color: Colors.blue,
-            //     onPressed: controller != null
-            //         ? onCaptureOrientationLockButtonPressed
-            //         : null,
-            //   ),
-          ],
-        ),
-        _flashModeControlRowWidget(),
-        _exposureModeControlRowWidget(),
-        _focusModeControlRowWidget(),
-      ],
-    );
-  }
+  // /// Display a bar with buttons to change the flash and exposure modes
+  // Widget _modeControlRowWidget() {
+  //   return Column(
+  //     children: <Widget>[
+  //       Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         children: <Widget>[
+  // IconButton(
+  //   icon: const Icon(Icons.flash_on),
+  //   color: Colors.blue,
+  //   onPressed: controller != null ? onFlashModeButtonPressed : null,
+  // ),
+  //   // The exposure and focus mode are currently not supported on the web.
+  //   ...!kIsWeb
+  //       ? <Widget>[
+  //           IconButton(
+  //             icon: const Icon(Icons.exposure),
+  //             color: Colors.blue,
+  //             onPressed: controller != null
+  //                 ? onExposureModeButtonPressed
+  //                 : null,
+  //           ),
+  //           IconButton(
+  //             icon: const Icon(Icons.filter_center_focus),
+  //             color: Colors.blue,
+  //             onPressed:
+  //                 controller != null ? onFocusModeButtonPressed : null,
+  //           )
+  //         ]
+  //       : <Widget>[],
+  //   IconButton(
+  //     icon: Icon(enableAudio ? Icons.volume_up : Icons.volume_mute),
+  //     color: Colors.blue,
+  //     onPressed: controller != null ? onAudioModeButtonPressed : null,
+  //   ),
+  //   IconButton(
+  //     icon: Icon(controller?.value.isCaptureOrientationLocked ?? false
+  //         ? Icons.screen_lock_rotation
+  //         : Icons.screen_rotation),
+  //     color: Colors.blue,
+  //     onPressed: controller != null
+  //         ? onCaptureOrientationLockButtonPressed
+  //         : null,
+  //   ),
+  //         ],
+  //       ),
+  //       // _flashModeControlRowWidget(),
+  //       // _exposureModeControlRowWidget(),
+  //       // _focusModeControlRowWidget(),
+  //     ],
+  //   );
+  // }
 
   Widget _flashModeControlRowWidget() {
     return SizeTransition(
@@ -395,150 +398,150 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     );
   }
 
-  Widget _exposureModeControlRowWidget() {
-    final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.auto
-          ? Colors.orange
-          : Colors.blue,
-    );
-    final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.exposureMode == ExposureMode.locked
-          ? Colors.orange
-          : Colors.blue,
-    );
+  // Widget _exposureModeControlRowWidget() {
+  //   final ButtonStyle styleAuto = TextButton.styleFrom(
+  //     // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+  //     // ignore: deprecated_member_use
+  //     primary: controller?.value.exposureMode == ExposureMode.auto
+  //         ? Colors.orange
+  //         : Colors.blue,
+  //   );
+  //   final ButtonStyle styleLocked = TextButton.styleFrom(
+  //     // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+  //     // ignore: deprecated_member_use
+  //     primary: controller?.value.exposureMode == ExposureMode.locked
+  //         ? Colors.orange
+  //         : Colors.blue,
+  //   );
 
-    return SizeTransition(
-      sizeFactor: _exposureModeControlRowAnimation,
-      child: ClipRect(
-        child: Container(
-          color: Colors.amberAccent,
-          child: Column(
-            children: <Widget>[
-              const Center(
-                child: Text('Exposure Mode'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    style: styleAuto,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.auto)
-                        : null,
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setExposurePoint(null);
-                        showInSnackBar('Resetting exposure point');
-                      }
-                    },
-                    child: const Text('AUTO'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () =>
-                            onSetExposureModeButtonPressed(ExposureMode.locked)
-                        : null,
-                    child: const Text('LOCKED'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () => controller!.setExposureOffset(0.0)
-                        : null,
-                    child: const Text('RESET OFFSET'),
-                  ),
-                ],
-              ),
-              const Center(
-                child: Text('Exposure Offset'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Text(_minAvailableExposureOffset.toString()),
-                  Slider(
-                    value: _currentExposureOffset,
-                    min: _minAvailableExposureOffset,
-                    max: _maxAvailableExposureOffset,
-                    label: _currentExposureOffset.toString(),
-                    onChanged: _minAvailableExposureOffset ==
-                            _maxAvailableExposureOffset
-                        ? null
-                        : setExposureOffset,
-                  ),
-                  Text(_maxAvailableExposureOffset.toString()),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  //   return SizeTransition(
+  //     sizeFactor: _exposureModeControlRowAnimation,
+  //     child: ClipRect(
+  //       child: Container(
+  //         color: Colors.amberAccent,
+  //         child: Column(
+  //           children: <Widget>[
+  //             const Center(
+  //               child: Text('Exposure Mode'),
+  //             ),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: <Widget>[
+  //                 TextButton(
+  //                   style: styleAuto,
+  //                   onPressed: controller != null
+  //                       ? () =>
+  //                           onSetExposureModeButtonPressed(ExposureMode.auto)
+  //                       : null,
+  //                   onLongPress: () {
+  //                     if (controller != null) {
+  //                       controller!.setExposurePoint(null);
+  //                       showInSnackBar('Resetting exposure point');
+  //                     }
+  //                   },
+  //                   child: const Text('AUTO'),
+  //                 ),
+  //                 TextButton(
+  //                   style: styleLocked,
+  //                   onPressed: controller != null
+  //                       ? () =>
+  //                           onSetExposureModeButtonPressed(ExposureMode.locked)
+  //                       : null,
+  //                   child: const Text('LOCKED'),
+  //                 ),
+  //                 TextButton(
+  //                   style: styleLocked,
+  //                   onPressed: controller != null
+  //                       ? () => controller!.setExposureOffset(0.0)
+  //                       : null,
+  //                   child: const Text('RESET OFFSET'),
+  //                 ),
+  //               ],
+  //             ),
+  //             const Center(
+  //               child: Text('Exposure Offset'),
+  //             ),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: <Widget>[
+  //                 Text(_minAvailableExposureOffset.toString()),
+  //                 Slider(
+  //                   value: _currentExposureOffset,
+  //                   min: _minAvailableExposureOffset,
+  //                   max: _maxAvailableExposureOffset,
+  //                   label: _currentExposureOffset.toString(),
+  //                   onChanged: _minAvailableExposureOffset ==
+  //                           _maxAvailableExposureOffset
+  //                       ? null
+  //                       : setExposureOffset,
+  //                 ),
+  //                 Text(_maxAvailableExposureOffset.toString()),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
-  Widget _focusModeControlRowWidget() {
-    final ButtonStyle styleAuto = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.auto
-          ? Colors.orange
-          : Colors.blue,
-    );
-    final ButtonStyle styleLocked = TextButton.styleFrom(
-      // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
-      // ignore: deprecated_member_use
-      primary: controller?.value.focusMode == FocusMode.locked
-          ? Colors.orange
-          : Colors.blue,
-    );
+  // Widget _focusModeControlRowWidget() {
+  //   final ButtonStyle styleAuto = TextButton.styleFrom(
+  //     // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+  //     // ignore: deprecated_member_use
+  //     primary: controller?.value.focusMode == FocusMode.auto
+  //         ? Colors.orange
+  //         : Colors.blue,
+  //   );
+  //   final ButtonStyle styleLocked = TextButton.styleFrom(
+  //     // TODO(darrenaustin): Migrate to new API once it lands in stable: https://github.com/flutter/flutter/issues/105724
+  //     // ignore: deprecated_member_use
+  //     primary: controller?.value.focusMode == FocusMode.locked
+  //         ? Colors.orange
+  //         : Colors.blue,
+  // );
 
-    return SizeTransition(
-      sizeFactor: _focusModeControlRowAnimation,
-      child: ClipRect(
-        child: Container(
-          color: Colors.grey.shade50,
-          child: Column(
-            children: <Widget>[
-              const Center(
-                child: Text('Focus Mode'),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  TextButton(
-                    style: styleAuto,
-                    onPressed: controller != null
-                        ? () => onSetFocusModeButtonPressed(FocusMode.auto)
-                        : null,
-                    onLongPress: () {
-                      if (controller != null) {
-                        controller!.setFocusPoint(null);
-                      }
-                      showInSnackBar('Resetting focus point');
-                    },
-                    child: const Text('AUTO'),
-                  ),
-                  TextButton(
-                    style: styleLocked,
-                    onPressed: controller != null
-                        ? () => onSetFocusModeButtonPressed(FocusMode.locked)
-                        : null,
-                    child: const Text('LOCKED'),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  //   return SizeTransition(
+  //     sizeFactor: _focusModeControlRowAnimation,
+  //     child: ClipRect(
+  //       child: Container(
+  //         color: Colors.grey.shade50,
+  //         child: Column(
+  //           children: <Widget>[
+  //             const Center(
+  //               child: Text('Focus Mode'),
+  //             ),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //               children: <Widget>[
+  //                 TextButton(
+  //                   style: styleAuto,
+  //                   onPressed: controller != null
+  //                       ? () => onSetFocusModeButtonPressed(FocusMode.auto)
+  //                       : null,
+  //                   onLongPress: () {
+  //                     if (controller != null) {
+  //                       controller!.setFocusPoint(null);
+  //                     }
+  //                     showInSnackBar('Resetting focus point');
+  //                   },
+  //                   child: const Text('AUTO'),
+  //                 ),
+  //                 TextButton(
+  //                   style: styleLocked,
+  //                   onPressed: controller != null
+  //                       ? () => onSetFocusModeButtonPressed(FocusMode.locked)
+  //                       : null,
+  //                   child: const Text('LOCKED'),
+  //                 ),
+  //               ],
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
@@ -556,11 +559,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               ? onTakePictureButtonPressed
               : null,
         ),
-        IconButton(
-          icon: const Icon(Icons.flash_on),
-          color: Colors.amberAccent,
-          onPressed: controller != null ? onFlashModeButtonPressed : null,
-        ),
+        // IconButton(
+        //   icon: const Icon(Icons.flash_on),
+        //   color: Colors.amberAccent,
+        //   onPressed: controller != null ? onFlashModeButtonPressed : null,
+        // ),
         // IconButton(
         //   icon: const Icon(Icons.videocam),
         //   color: Colors.blue,
