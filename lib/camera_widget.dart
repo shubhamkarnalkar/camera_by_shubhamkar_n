@@ -181,8 +181,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
                   _cameraPreviewWidget(),
                   Positioned(
                       bottom: 0,
-                      height: 50,
-                      width: 200,
+                      height: 100,
+                      width: 370, //camera, flash, thumbnail image are here
                       child: _captureControlRowWidget()),
                   Positioned(top: 0, left: 0, child: _cameraTogglesRowWidget()),
                   // _thumbnailWidget(),
@@ -568,30 +568,55 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
     final CameraController? cameraController = controller;
-
+    final VideoPlayerController? localVideoController = videoController;
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Flexible(flex: 2, child: Container()),
-        IconButton(
-          icon: const Icon(Icons.camera_alt_rounded),
-          color: Colors.amberAccent,
-          onPressed: cameraController != null &&
-                  cameraController.value.isInitialized &&
-                  !cameraController.value.isRecordingVideo
-              ? onTakePictureButtonPressed
-              : null,
+        Flexible(
+          flex: 2,
+          child: imageFile == null
+              ? const SizedBox(
+                  width: 100,
+                  height: 100,
+                )
+              : Container(
+                  height: 100,
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(50))),
+                  child: Image.file(
+                    File(imageFile!.path),
+                  ),
+                ),
+        ),
+        Flexible(
+          flex: 1,
+          child: IconButton(
+            icon: const Icon(Icons.radio_button_checked),
+            iconSize: 80,
+            color: Colors.white,
+            onPressed: cameraController != null &&
+                    cameraController.value.isInitialized &&
+                    !cameraController.value.isRecordingVideo
+                ? onTakePictureButtonPressed
+                : null,
+          ),
         ),
         SpeedDial(
-          // animatedIcon: AnimatedIcons.list_view,
-          icon: Icons.flash_on,
+          animatedIcon: AnimatedIcons.list_view,
+          backgroundColor: Colors.white.withOpacity(0.3),
+          //
+          // child: const Icon(
+          //   Icons.flash_on,
+          //   color: Colors.amberAccent,
+          // ),
           children: [
             SpeedDialChild(
               // ignore: prefer_const_constructors
               // ignore: prefer_const_constructors
               child: Icon(
-                Icons.flash_off,
-                color: Colors.amberAccent,
+                Icons.power_rounded,
+                // color: Colors.amberAccent,
               ),
               label: 'Flash off',
               backgroundColor: controller?.value.flashMode == FlashMode.off
