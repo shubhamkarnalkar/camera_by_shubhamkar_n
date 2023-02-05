@@ -691,9 +691,18 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     } else {
       for (final CameraDescription cameraDescription in _cameras) {
         toggles.add(
-          SizedBox(
-            width: 90.0,
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.9),
+                  width: 2,
+                ),
+                borderRadius: const BorderRadius.all(Radius.circular(10))),
+            width: 100.0,
+            height: 50,
+            // color: Colors.white.withOpacity(0.3),
             child: RadioListTile<CameraDescription>(
+              tileColor: Colors.white,
               activeColor: Colors.white,
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
