@@ -18,6 +18,7 @@ import 'dart:io';
 import 'package:camera/camera.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
 
@@ -161,30 +162,103 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       // appBar: AppBar(
       //   title: const Text('Camera example'),
       // ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: controller != null ? onFlashModeButtonPressed : null,
-        child: const Icon(Icons.flash_on_rounded),
-        backgroundColor: Colors.white.withOpacity(0.1),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: controller != null ? onFlashModeButtonPressed : null,
+      //   child: const Icon(Icons.flash_on_rounded),
+      //   backgroundColor: Colors.white.withOpacity(0.1),
+      // ),
+      // floatingActionButton:
+      // floatingActionButtonLocation: FloatingActionButtonLocation.miniStartTop,
       body: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(top: 20.0),
-            child: Stack(
-              children: [
-                Expanded(child: _cameraPreviewWidget()),
-                Positioned(bottom: 0, child: _captureControlRowWidget()),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: Row(
-              children: <Widget>[
-                _cameraTogglesRowWidget(),
-                _thumbnailWidget(),
-              ],
+          Flexible(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  _cameraPreviewWidget(),
+                  Positioned(
+                      bottom: 0,
+                      height: 50,
+                      width: 200,
+                      child: _captureControlRowWidget()),
+                  Positioned(top: 0, left: 0, child: _cameraTogglesRowWidget()),
+                  // _thumbnailWidget(),
+                  // Positioned(
+                  //   top: 300,
+                  //   right: 0,
+                  //   child: SpeedDial(
+                  //     // animatedIcon: AnimatedIcons.list_view,
+                  //     icon: Icons.flash_on,
+                  //     children: [
+                  //       SpeedDialChild(
+                  //         // ignore: prefer_const_constructors
+                  //         // ignore: prefer_const_constructors
+                  //         child: Icon(
+                  //           Icons.flash_off,
+                  //           color: Colors.amberAccent,
+                  //         ),
+                  //         label: 'Flash off',
+                  //         backgroundColor:
+                  //             controller?.value.flashMode == FlashMode.off
+                  //                 ? Colors.orange
+                  //                 : Colors.amberAccent,
+                  //         onTap: controller != null
+                  //             ? () => onSetFlashModeButtonPressed(FlashMode.off)
+                  //             : null,
+                  //       ),
+                  //       SpeedDialChild(
+                  //         // ignore: prefer_const_constructors
+                  //         child: Icon(
+                  //           Icons.flash_auto_rounded,
+                  //         ),
+                  //         label: 'Flash Auto',
+                  //         backgroundColor:
+                  //             controller?.value.flashMode == FlashMode.auto
+                  //                 ? Colors.orange
+                  //                 : Colors.amberAccent,
+                  //         onTap: controller != null
+                  //             ? () =>
+                  //                 onSetFlashModeButtonPressed(FlashMode.auto)
+                  //             : null,
+                  //       ),
+                  //       SpeedDialChild(
+                  //         // ignore: prefer_const_constructors
+                  //         child: Icon(
+                  //           Icons.flash_on,
+                  //         ),
+                  //         label: 'Flash On',
+                  //         backgroundColor:
+                  //             controller?.value.flashMode == FlashMode.always
+                  //                 ? Colors.orange
+                  //                 : Colors.amberAccent,
+                  //         onTap: controller != null
+                  //             ? () =>
+                  //                 onSetFlashModeButtonPressed(FlashMode.always)
+                  //             : null,
+                  //       ),
+                  //       SpeedDialChild(
+                  //         // ignore: prefer_const_constructors
+                  //         child: Icon(
+                  //           Icons.highlight,
+                  //         ),
+                  //         label: 'highlight',
+                  //         backgroundColor:
+                  //             controller?.value.flashMode == FlashMode.torch
+                  //                 ? Colors.orange
+                  //                 : Colors.amberAccent,
+                  //         onTap: controller != null
+                  //             ? () =>
+                  //                 onSetFlashModeButtonPressed(FlashMode.torch)
+                  //             : null,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
+                ],
+              ),
             ),
           ),
         ],
@@ -206,33 +280,25 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           ),
         ),
       );
-
-      // return const Text(
-      //   'Tap a camera',
-      //   style: TextStyle(
-      //     color: Colors.white,
-      //     fontSize: 24.0,
-      //     fontWeight: FontWeight.w900,
+    } else {
+      return CameraPreview(controller!);
+      // Listener(
+      //   onPointerDown: (_) => _pointers++,
+      //   onPointerUp: (_) => _pointers--,
+      //   child: CameraPreview(
+      //     controller!,
+      //     child: LayoutBuilder(
+      //         builder: (BuildContext context, BoxConstraints constraints) {
+      //       return GestureDetector(
+      //         behavior: HitTestBehavior.opaque,
+      //         onScaleStart: _handleScaleStart,
+      //         onScaleUpdate: _handleScaleUpdate,
+      //         onTapDown: (TapDownDetails details) =>
+      //             onViewFinderTap(details, constraints),
+      //       );
+      //     }),
       //   ),
       // );
-    } else {
-      return Listener(
-        onPointerDown: (_) => _pointers++,
-        onPointerUp: (_) => _pointers--,
-        child: CameraPreview(
-          controller!,
-          child: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onScaleStart: _handleScaleStart,
-              onScaleUpdate: _handleScaleUpdate,
-              onTapDown: (TapDownDetails details) =>
-                  onViewFinderTap(details, constraints),
-            );
-          }),
-        ),
-      );
     }
   }
 
@@ -250,50 +316,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         .clamp(_minAvailableZoom, _maxAvailableZoom);
 
     await controller!.setZoomLevel(_currentScale);
-  }
-
-  /// Display the thumbnail of the captured image or video.
-  Widget _thumbnailWidget() {
-    final VideoPlayerController? localVideoController = videoController;
-
-    return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            if (localVideoController == null && imageFile == null)
-              Container()
-            else
-              SizedBox(
-                width: 64.0,
-                height: 64.0,
-                child: (localVideoController == null)
-                    ? (
-                        // The captured image on the web contains a network-accessible URL
-                        // pointing to a location within the browser. It may be displayed
-                        // either with Image.network or Image.memory after loading the image
-                        // bytes to memory.
-                        kIsWeb
-                            ? Image.network(imageFile!.path)
-                            : Image.file(File(imageFile!.path)))
-                    : Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.pink)),
-                        child: Center(
-                          child: AspectRatio(
-                              aspectRatio:
-                                  localVideoController.value.size != null
-                                      ? localVideoController.value.aspectRatio
-                                      : 1.0,
-                              child: VideoPlayer(localVideoController)),
-                        ),
-                      ),
-              ),
-          ],
-        ),
-      ),
-    );
   }
 
   // /// Display a bar with buttons to change the flash and exposure modes
@@ -349,54 +371,54 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   //   );
   // }
 
-  Widget _flashModeControlRowWidget() {
-    return SizeTransition(
-      sizeFactor: _flashModeControlRowAnimation,
-      child: ClipRect(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.flash_off),
-              color: controller?.value.flashMode == FlashMode.off
-                  ? Colors.orange
-                  : Colors.amberAccent,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.off)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.flash_auto),
-              color: controller?.value.flashMode == FlashMode.auto
-                  ? Colors.orange
-                  : Colors.amberAccent,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.auto)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.flash_on),
-              color: controller?.value.flashMode == FlashMode.always
-                  ? Colors.orange
-                  : Colors.amberAccent,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.always)
-                  : null,
-            ),
-            IconButton(
-              icon: const Icon(Icons.highlight),
-              color: controller?.value.flashMode == FlashMode.torch
-                  ? Colors.orange
-                  : Colors.amberAccent,
-              onPressed: controller != null
-                  ? () => onSetFlashModeButtonPressed(FlashMode.torch)
-                  : null,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget _flashModeControlRowWidget() {
+  //   return SizeTransition(
+  //     sizeFactor: _flashModeControlRowAnimation,
+  //     child: ClipRect(
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         children: <Widget>[
+  //           IconButton(
+  //             icon: const Icon(Icons.flash_off),
+  //             color: controller?.value.flashMode == FlashMode.off
+  //                 ? Colors.orange
+  //                 : Colors.amberAccent,
+  //             onPressed: controller != null
+  //                 ? () => onSetFlashModeButtonPressed(FlashMode.off)
+  //                 : null,
+  //           ),
+  //           IconButton(
+  //             icon: const Icon(Icons.flash_auto),
+  //             color: controller?.value.flashMode == FlashMode.auto
+  //                 ? Colors.orange
+  //                 : Colors.amberAccent,
+  //             onPressed: controller != null
+  //                 ? () => onSetFlashModeButtonPressed(FlashMode.auto)
+  //                 : null,
+  //           ),
+  //           IconButton(
+  //             icon: const Icon(Icons.flash_on),
+  //             color: controller?.value.flashMode == FlashMode.always
+  //                 ? Colors.orange
+  //                 : Colors.amberAccent,
+  //             onPressed: controller != null
+  //                 ? () => onSetFlashModeButtonPressed(FlashMode.always)
+  //                 : null,
+  //           ),
+  //           IconButton(
+  //             icon: const Icon(Icons.highlight),
+  //             color: controller?.value.flashMode == FlashMode.torch
+  //                 ? Colors.orange
+  //                 : Colors.amberAccent,
+  //             onPressed: controller != null
+  //                 ? () => onSetFlashModeButtonPressed(FlashMode.torch)
+  //                 : null,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   // Widget _exposureModeControlRowWidget() {
   //   final ButtonStyle styleAuto = TextButton.styleFrom(
@@ -548,10 +570,11 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     final CameraController? cameraController = controller;
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
+        Flexible(flex: 2, child: Container()),
         IconButton(
-          icon: const Icon(Icons.camera_alt),
+          icon: const Icon(Icons.camera_alt_rounded),
           color: Colors.amberAccent,
           onPressed: cameraController != null &&
                   cameraController.value.isInitialized &&
@@ -559,52 +582,66 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
               ? onTakePictureButtonPressed
               : null,
         ),
-        // IconButton(
-        //   icon: const Icon(Icons.flash_on),
-        //   color: Colors.amberAccent,
-        //   onPressed: controller != null ? onFlashModeButtonPressed : null,
-        // ),
-        // IconButton(
-        //   icon: const Icon(Icons.videocam),
-        //   color: Colors.blue,
-        //   onPressed: cameraController != null &&
-        //           cameraController.value.isInitialized &&
-        //           !cameraController.value.isRecordingVideo
-        //       ? onVideoRecordButtonPressed
-        //       : null,
-        // ),
-        // IconButton(
-        //   icon: cameraController != null &&
-        //           cameraController.value.isRecordingPaused
-        //       ? const Icon(Icons.play_arrow)
-        //       : const Icon(Icons.pause),
-        //   color: Colors.blue,
-        //   onPressed: cameraController != null &&
-        //           cameraController.value.isInitialized &&
-        //           cameraController.value.isRecordingVideo
-        //       ? (cameraController.value.isRecordingPaused)
-        //           ? onResumeButtonPressed
-        //           : onPauseButtonPressed
-        //       : null,
-        // ),
-        // IconButton(
-        //   icon: const Icon(Icons.stop),
-        //   color: Colors.red,
-        //   onPressed: cameraController != null &&
-        //           cameraController.value.isInitialized &&
-        //           cameraController.value.isRecordingVideo
-        //       ? onStopButtonPressed
-        //       : null,
-        // ),
-        // IconButton(
-        //   icon: const Icon(Icons.pause_presentation),
-        //   color:
-        //       cameraController != null && cameraController.value.isPreviewPaused
-        //           ? Colors.red
-        //           : Colors.blue,
-        //   onPressed:
-        //       cameraController == null ? null : onPausePreviewButtonPressed,
-        // ),
+        SpeedDial(
+          // animatedIcon: AnimatedIcons.list_view,
+          icon: Icons.flash_on,
+          children: [
+            SpeedDialChild(
+              // ignore: prefer_const_constructors
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.flash_off,
+                color: Colors.amberAccent,
+              ),
+              label: 'Flash off',
+              backgroundColor: controller?.value.flashMode == FlashMode.off
+                  ? Colors.orange
+                  : Colors.amberAccent,
+              onTap: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.off)
+                  : null,
+            ),
+            SpeedDialChild(
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.flash_auto_rounded,
+              ),
+              label: 'Flash Auto',
+              backgroundColor: controller?.value.flashMode == FlashMode.auto
+                  ? Colors.orange
+                  : Colors.amberAccent,
+              onTap: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.auto)
+                  : null,
+            ),
+            SpeedDialChild(
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.flash_on,
+              ),
+              label: 'Flash On',
+              backgroundColor: controller?.value.flashMode == FlashMode.always
+                  ? Colors.orange
+                  : Colors.amberAccent,
+              onTap: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.always)
+                  : null,
+            ),
+            SpeedDialChild(
+              // ignore: prefer_const_constructors
+              child: Icon(
+                Icons.highlight,
+              ),
+              label: 'highlight',
+              backgroundColor: controller?.value.flashMode == FlashMode.torch
+                  ? Colors.orange
+                  : Colors.amberAccent,
+              onTap: controller != null
+                  ? () => onSetFlashModeButtonPressed(FlashMode.torch)
+                  : null,
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -623,7 +660,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     if (_cameras.isEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
-        showInSnackBar('Select a camera');
+        showInSnackBar('Initializing a camera');
       });
       return const Text('None');
     } else {
@@ -632,6 +669,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           SizedBox(
             width: 90.0,
             child: RadioListTile<CameraDescription>(
+              activeColor: Colors.white,
               title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
               groupValue: controller?.description,
               value: cameraDescription,
