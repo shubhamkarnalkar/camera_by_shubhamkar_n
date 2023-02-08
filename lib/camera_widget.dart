@@ -21,6 +21,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:video_player/video_player.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // ///for blob
 // import 'package:azblob/azblob.dart';
@@ -83,6 +84,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   double _baseScale = 1.0;
   int direction = 0;
   List<CameraDescription> _cameras = <CameraDescription>[];
+  List<String> imageFiles = [];
   // Counting pointers (number of user fingers on screen)
   int _pointers = 0;
   Future<void> initial() async {
@@ -99,11 +101,28 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
   }
 
+  void sharedPrefInit() async {
+    try {
+      /// Checks if shared preference exist
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      prefs.getString("app-name");
+    } catch (err) {
+      /// setMockInitialValues initiates shared preference
+      /// Adds app-name
+      // SharedPreferences.setMockInitialValues({});
+      Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+      final SharedPreferences prefs = await _prefs;
+      prefs.setString("app-name", "my-app");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     initial();
+    sharedPrefInit();
     _flashModeControlRowAnimationController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
@@ -281,24 +300,24 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
         ),
       );
     } else {
-      return CameraPreview(controller!);
-      // Listener(
-      //   onPointerDown: (_) => _pointers++,
-      //   onPointerUp: (_) => _pointers--,
-      //   child: CameraPreview(
-      //     controller!,
-      //     child: LayoutBuilder(
-      //         builder: (BuildContext context, BoxConstraints constraints) {
-      //       return GestureDetector(
-      //         behavior: HitTestBehavior.opaque,
-      //         onScaleStart: _handleScaleStart,
-      //         onScaleUpdate: _handleScaleUpdate,
-      //         onTapDown: (TapDownDetails details) =>
-      //             onViewFinderTap(details, constraints),
-      //       );
-      //     }),
-      //   ),
-      // );
+      // return CameraPreview(controller!);
+      return Listener(
+        onPointerDown: (_) => _pointers++,
+        onPointerUp: (_) => _pointers--,
+        child: CameraPreview(
+          controller!,
+          child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+            return GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onScaleStart: _handleScaleStart,
+              onScaleUpdate: _handleScaleUpdate,
+              onTapDown: (TapDownDetails details) =>
+                  onViewFinderTap(details, constraints),
+            );
+          }),
+        ),
+      );
     }
   }
 
@@ -568,7 +587,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
     final CameraController? cameraController = controller;
-    final VideoPlayerController? localVideoController = videoController;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -833,27 +852,20 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     String? finalBlobUrl;
     // try {
     String fileName = file.path.split(Platform.pathSeparator).last;
-    // read file as Uint8List
-    // Uint8List content = await file.readAsBytes();
-    // var storage = AzureStorage.parse(
-    //     'DefaultEndpointsProtocol=https;AccountName=bokingcsvfiles;AccountKey=kJwQ/+FgJ+SUWtQHsTSl2Uxv9QqgagRytyBJkjB8Cc7XmAmv1rD46Ixs+rFfgajgDOaS8FN4pnt8+AStI0i92Q==;EndpointSuffix=core.windows.net');
-    String container = "cardatacontainer";
-    // get the mime type of the file
-    // String? contentType = lookupMimeType(fileName);
-    //Don't uncomment the following code
-    // await storage.putBlob('/$container/$fileName',
-    //     bodyBytes: content,
-    //     contentType: contentType,
-    //     type: BlobType.BlockBlob);
-    finalBlobUrl =
-        'https://bokingcsvfiles.blob.core.windows.net/$container/$fileName';
-    print("done");
-    // }
-    // } on AzureStorageException catch (ex) {
-    //   print(ex.message);
-    // } catch (err) {
-    //   print(err);
-    // }
+
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    // prefs.setString("app-name", "my-app");
+    // imageFiles? = await prefs.getStringList("imageFiles");
+    List<String> myList = (prefs.getStringList('imageFiles') ?? <String>[]);
+
+    myList.add(file.path);
+    prefs.setStringList('imageFiles', myList);
+
+    prefs.setString("removeFile", file.path);
+
+    finalBlobUrl = file.path;
+
     return finalBlobUrl;
   }
 
@@ -871,8 +883,8 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
           String? blobUrl = await uploadToBlob(file);
           // FFAppState().carImages.add(blobUrl!.toString());
           // print(FFAppState().carImages);
-          await GallerySaver.saveImage(file.path, albumName: 'Airside')
-              .then((value) => true);
+          // await GallerySaver.saveImage(file.path, albumName: 'Airside')
+          //     .then((value) => true);
           showInSnackBar('Picture saved to ${file.path}');
         }
       }

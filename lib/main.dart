@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:learn_getx/locator.dart';
 import 'package:learn_getx/camera_widget.dart';
+import 'package:learn_getx/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+final dbHelper = DatabaseHelper();
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dbHelper.init();
   runApp(const MyApp());
 }
 
@@ -40,7 +45,34 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
+  Future<void> getImageList() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    // prefs.setString("app-name", "my-app");
+    // imageFiles? = await prefs.getStringList("imageFiles");
+    List<String> myList = (prefs.getStringList('imageFiles') ?? <String>[]);
+  }
+
+  Future<void> clearLastItem() async {
+    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+    final SharedPreferences prefs = await _prefs;
+    // prefs.setString("app-name", "my-app");
+    // imageFiles? = await prefs.getStringList("imageFiles");
+    List<String> myList = (prefs.getStringList('imageFiles') ?? <String>[]);
+
+    String remove = prefs.getString("removeFile") ?? '';
+    myList.remove(remove);
+    prefs.setStringList('imageFiles', myList);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // getImageList();
+  }
+
   void _incrementCounter() {
+    getImageList();
     setState(() {
       _counter++;
     });
@@ -126,6 +158,7 @@ class _MyHomePageState extends State<MyHomePage> {
           TextButton(
               onPressed: () {
                 _counter = 0;
+                clearLastItem();
                 setState(() {});
               },
               child: const Text('Clear')),
